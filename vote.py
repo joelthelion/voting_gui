@@ -35,10 +35,11 @@ class Ballots:
         if not self.is_in(ballot):
             self.ballots[self.get_couple(ballot)]=(winner,sep,other,count)
         else:
-            old_sep,old_count=self.ballots[self.get_couple(ballot)]
+            d1,d2,old_sep,old_count=self.ballots[self.get_couple(ballot)]
             assert(old_sep==sep)
             self.ballots[self.get_couple(ballot)]=(winner,sep,other,old_count+count)
     def parse_ballot(self,string):
+        string=unicode(string,"utf-8")
         count,rest=string.split(":")
         count=int(count)
         winner,sep,other = re.search("([^=^>]*)(=|>)(.*)",rest).groups()
@@ -47,11 +48,11 @@ class Ballots:
         return (winner,sep,other,count)
     def ballot_repr(self,ballot):
         winner,sep,other,count=ballot
-        return repr(count)+":"+winner+sep+other
+        return unicode(repr(count))+u":"+winner+sep+other
     def save(self):
         with open(self.filename,"w") as f:
             for ballot in self.ballots.values():
-                f.write((self.ballot_repr(ballot)+"\n").encode("utf-8"))
+                f.write((self.ballot_repr(ballot)+u"\n").encode("utf-8"))
 
 class StartQT4(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -84,11 +85,11 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.prenom2.setText(p2)
     def count_ballot_and_update(self,win):
         if win == 0:
-            b=(unicode(self.ui.prenom1.text()),"=",unicode(self.ui.prenom2.text()),1)
+            b=(unicode(self.ui.prenom1.text()),u"=",unicode(self.ui.prenom2.text()),1)
         elif win==1:
-            b=(unicode(self.ui.prenom1.text()),">",unicode(self.ui.prenom2.text()),1)
+            b=(unicode(self.ui.prenom1.text()),u">",unicode(self.ui.prenom2.text()),1)
         elif win==2:
-            b=(unicode(self.ui.prenom2.text()),">",unicode(self.ui.prenom1.text()),1)
+            b=(unicode(self.ui.prenom2.text()),u">",unicode(self.ui.prenom1.text()),1)
         self.ballots.add(b)
         self.ballots.save()
         self.update()
