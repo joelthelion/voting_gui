@@ -78,21 +78,21 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="button1">
         <property name="text">
          <string>Oui!</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="button_equal">
         <property name="text">
          <string>C'est égal</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="button2">
         <property name="text">
          <string>Oui!</string>
         </property>

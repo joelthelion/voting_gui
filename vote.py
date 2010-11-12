@@ -47,11 +47,11 @@ class Ballots:
         return (winner,sep,other,count)
     def ballot_repr(self,ballot):
         winner,sep,other,count=ballot
-        return repr(count)+":"+winner+sep+loser
+        return repr(count)+":"+winner+sep+other
     def save(self):
         with open(self.filename,"w") as f:
             for ballot in self.ballots.values():
-                f.write(self.ballot_repr(ballot)+"\n")
+                f.write((self.ballot_repr(ballot)+"\n").encode("utf-8"))
 
 class StartQT4(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -59,18 +59,43 @@ class StartQT4(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        prenoms=[unicode(x.strip(),"utf-8") for x in open("prenoms.txt")]
+        self.ballots=Ballots("ballots.txt")
+        self.combis=[]
+        for n,p in enumerate(prenoms):
+            for p2 in prenoms[n+1:]:
+                self.combis.append((p,p2))
+        import random
+        random.shuffle(self.combis)
+        QtCore.QObject.connect(self.ui.button1,QtCore.SIGNAL("clicked()"), self.callback_1)
+        QtCore.QObject.connect(self.ui.button2,QtCore.SIGNAL("clicked()"), self.callback_2)
+        QtCore.QObject.connect(self.ui.button_equal,QtCore.SIGNAL("clicked()"), self.callback_eq)
+        self.update()
+        #print prenoms
+    def callback_1(self):
+        self.count_ballot_and_update(1)
+    def callback_2(self):
+        self.count_ballot_and_update(2)
+    def callback_eq(self):
+        self.count_ballot_and_update(0)
+    def update(self):
+        p1,p2=self.combis.pop()
+        self.ui.prenom1.setText(p1)
+        self.ui.prenom2.setText(p2)
+    def count_ballot_and_update(self,win):
+        if win == 0:
+            b=(unicode(self.ui.prenom1.text()),"=",unicode(self.ui.prenom2.text()),1)
+        elif win==1:
+            b=(unicode(self.ui.prenom1.text()),">",unicode(self.ui.prenom2.text()),1)
+        elif win==2:
+            b=(unicode(self.ui.prenom2.text()),">",unicode(self.ui.prenom1.text()),1)
+        self.ballots.add(b)
+        self.ballots.save()
+        self.update()
+
+
 
 if __name__ == "__main__":
-    prenoms=[x.strip() for x in open("prenoms.txt")]
-    b=Ballots("ballots.txt")
-    b.save()
-    combis=[]
-    for n,p in enumerate(prenoms):
-        for p2 in prenoms[n+1:]:
-            combis.append((p,p2))
-    import random
-    random.shuffle(combis)
-    #print prenoms
     app = QtGui.QApplication(sys.argv)
     myapp = StartQT4()
     myapp.show()
