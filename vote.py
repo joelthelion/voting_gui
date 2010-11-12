@@ -60,7 +60,7 @@ class StartQT4(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        prenoms=[unicode(x.strip(),"utf-8") for x in open("prenoms.txt")]
+        prenoms=[unicode(x.strip(),"utf-8").capitalize() for x in open("prenoms.txt")]
         self.ballots=Ballots("ballots.txt")
         self.combis=[]
         for n,p in enumerate(prenoms):
@@ -80,14 +80,12 @@ class StartQT4(QtGui.QMainWindow):
     def callback_eq(self):
         self.count_ballot_and_update(0)
     def update(self):
-        p1,p2=self.combis.pop()
-        while frozenset((p1,p2)) in self.ballots.ballots.keys():
-            try:
-                p1,p2=self.combis.pop()
-            except IndexError:
+        p1,p2=None,None
+        while p1 is None or frozenset((p1,p2)) in self.ballots.ballots.keys():
+            if not self.combis:
                 print "Thanks, you are done!"
-                QtGui.QApplication.instance().quit()
                 sys.exit(0)
+            p1,p2=self.combis.pop()
         self.ui.prenom1.setText(p1)
         self.ui.prenom2.setText(p2)
 
