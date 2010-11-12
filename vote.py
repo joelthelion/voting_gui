@@ -81,8 +81,16 @@ class StartQT4(QtGui.QMainWindow):
         self.count_ballot_and_update(0)
     def update(self):
         p1,p2=self.combis.pop()
+        while frozenset((p1,p2)) in self.ballots.ballots.keys():
+            try:
+                p1,p2=self.combis.pop()
+            except IndexError:
+                print "Thanks, you are done!"
+                QtGui.QApplication.instance().quit()
+                sys.exit(0)
         self.ui.prenom1.setText(p1)
         self.ui.prenom2.setText(p2)
+
     def count_ballot_and_update(self,win):
         if win == 0:
             b=(unicode(self.ui.prenom1.text()),u"=",unicode(self.ui.prenom2.text()),1)
