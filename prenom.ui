@@ -17,10 +17,10 @@
    <iconset resource="resource.qrc">
     <normaloff>:/all/icon.png</normaloff>:/all/icon.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QMainWindow {background-image: url(:/all/nounours_cropped.png)}</string>
-  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget#centralwidget {background-image: url(:/all/nounours_cropped.png);}</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -47,9 +47,6 @@
           <weight>75</weight>
           <bold>true</bold>
          </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-image: none;</string>
         </property>
         <property name="text">
          <string>ou</string>
@@ -112,7 +109,7 @@
      <x>0</x>
      <y>0</y>
      <width>335</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
