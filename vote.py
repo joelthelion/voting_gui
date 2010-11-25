@@ -5,6 +5,7 @@ import sys
 import re
 from PyQt4 import QtCore, QtGui
 from prenom import Ui_MainWindow
+from results import Ui_results
 
 
 class Ballots:
@@ -54,6 +55,12 @@ class Ballots:
             for ballot in self.ballots.values():
                 f.write((self.ballot_repr(ballot)+u"\n").encode("utf-8"))
 
+class ResultWindow(QtGui.QDialog):
+    def __init__(self,parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui= Ui_results()
+        self.ui.setupUi(self)
+
 class StartQT4(QtGui.QMainWindow):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -83,11 +90,31 @@ class StartQT4(QtGui.QMainWindow):
         p1,p2=None,None
         while p1 is None or frozenset((p1,p2)) in self.ballots.ballots.keys():
             if not self.combis:
-                print "Thanks, you are done!"
+                self.ui.button1.setEnabled(False)
+                self.ui.button2.setEnabled(False)
+                self.ui.button_equal.setEnabled(False)
+                self.show_results()
                 sys.exit(0)
-            p1,p2=self.combis.pop()
+            else:
+                p1,p2=self.combis.pop()
         self.ui.prenom1.setText(p1)
         self.ui.prenom2.setText(p2)
+    def show_results(self):
+        self.show()
+        counts={}
+        for winner,delim,loser,count in self.ballots.ballots.values():
+            if delim != ">" : continue
+            else:
+                counts[winner]=counts.get(winner,0)+1
+                counts[loser]=counts.get(loser,0)-1
+        res_win=ResultWindow()
+        res_win.ui.list.setRowCount(len(counts))
+        for n,(key,value) in enumerate(counts.iteritems()):
+            res_win.ui.list.setItem(n,0,QtGui.QTableWidgetItem(key))
+            res_win.ui.list.setItem(n,1,QtGui.QTableWidgetItem(str(value)))
+        res_win.ui.list.sortItems(1,QtGui.DescendingOrder)
+        res_win.exec_()
+
 
     def count_ballot_and_update(self,win):
         if win == 0:
