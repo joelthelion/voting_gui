@@ -13,7 +13,8 @@ class Ballots:
     def __init__(self,filename):
         """open file and parse ballots"""
         #ballots[frozenset(p1,p2)]=(winner,sep,other,count)
-        self.ballots={}
+        self.ballots=[]
+        self.has_ballots=set()
         self.filename=filename
         try:
             for l in open(filename):
@@ -22,7 +23,7 @@ class Ballots:
         except IOError:
             print "Ballot file not found"
     def is_in(self,ballot):
-        return self.get_couple(ballot) in self.ballots.keys()
+        return self.get_couple(ballot) in self.has_ballots
     def get_couple(self,ballot):
         winner,sep,other,count=ballot
         winner,sep,other,count=ballot
@@ -34,12 +35,8 @@ class Ballots:
         winner,sep,other,count=ballot
         winner=winner.capitalize()
         other=other.capitalize()
-        if not self.is_in(ballot):
-            self.ballots[self.get_couple(ballot)]=(winner,sep,other,count)
-        else:
-            d1,d2,old_sep,old_count=self.ballots[self.get_couple(ballot)]
-            assert(old_sep==sep)
-            self.ballots[self.get_couple(ballot)]=(winner,sep,other,old_count+count)
+        self.ballots.append((winner,sep,other,count))
+        self.has_ballots.add(self.get_couple(self.ballots[-1]))
     def parse_ballot(self,string):
         string=unicode(string,"utf-8")
         count,rest=string.split(":")
@@ -53,7 +50,7 @@ class Ballots:
         return unicode(repr(count))+u":"+winner+sep+other
     def save(self):
         with open(self.filename,"w") as f:
-            for ballot in self.ballots.values():
+            for ballot in self.ballots:
                 f.write((self.ballot_repr(ballot)+u"\n").encode("utf-8"))
 
 class NumericalTableItem(QtGui.QTableWidgetItem):
@@ -69,7 +66,7 @@ class ResultWindow(QtGui.QDialog):
         self.ui.setupUi(self)
     def show_results(self,ballots):
         counts={}
-        for winner,delim,loser,count in ballots.values():
+        for winner,delim,loser,count in ballots:
             if delim != ">" : continue
             else:
                 counts[winner]=counts.get(winner,0)+1
@@ -115,7 +112,7 @@ class StartQT4(QtGui.QMainWindow):
         self.count_ballot_and_update(0)
     def update(self):
         p1,p2=None,None
-        while p1 is None or frozenset((p1,p2)) in self.ballots.ballots.keys():
+        while p1 is None or frozenset((p1,p2)) in self.ballots.has_ballots:
             if not self.combis:
                 self.ui.button1.setEnabled(False)
                 self.ui.button2.setEnabled(False)
