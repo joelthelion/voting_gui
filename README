@@ -1,0 +1,6 @@
+To use:
+
+- install PyQt4 and PyQt4 development tools
+- run make
+- create a file called "prenoms.txt" containing your list of options
+- run vote.py
