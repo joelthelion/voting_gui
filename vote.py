@@ -86,7 +86,6 @@ class ResultWindow(QtGui.QDialog):
             table.setItem(n,1,NumericalTableItem(str(value)))
         table.sortItems(1,Qt.DescendingOrder)
         table.resizeColumnsToContents()
-        self.setFixedSize(table.horizontalHeader().length() + 43, table.verticalHeader().length() + 88) 
         self.exec_()
 
 class StartQT4(QtGui.QMainWindow):
