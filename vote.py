@@ -102,6 +102,8 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.button1,QtCore.SIGNAL("clicked()"), self.callback_1)
         QtCore.QObject.connect(self.ui.button2,QtCore.SIGNAL("clicked()"), self.callback_2)
         QtCore.QObject.connect(self.ui.button_equal,QtCore.SIGNAL("clicked()"), self.callback_eq)
+        QtCore.QObject.connect(self.ui.actionQuit,QtCore.SIGNAL("triggered()"), sys.exit)
+        QtCore.QObject.connect(self.ui.actionResults,QtCore.SIGNAL("triggered()"), self.show_results)
         self.update()
         #print prenoms
     def callback_1(self):
@@ -117,16 +119,16 @@ class StartQT4(QtGui.QMainWindow):
                 self.ui.button1.setEnabled(False)
                 self.ui.button2.setEnabled(False)
                 self.ui.button_equal.setEnabled(False)
-                self.show()
-                res_win=ResultWindow()
-                res_win.show_results(self.ballots.ballots)
+                self.show_results()
                 sys.exit(0)
             else:
                 p1,p2=self.combis.pop()
         self.ui.prenom1.setText(p1)
         self.ui.prenom2.setText(p2)
-
-
+    def show_results(self):
+        self.show()
+        res_win=ResultWindow()
+        res_win.show_results(self.ballots.ballots)
     def count_ballot_and_update(self,win):
         if win == 0:
             b=(unicode(self.ui.prenom1.text()),u"=",unicode(self.ui.prenom2.text()),1)
