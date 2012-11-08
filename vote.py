@@ -92,13 +92,23 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.setupUi(self)
 
         prenoms=[x.strip().capitalize() for x in open("prenoms.txt")]
-        self.ballots=Ballots("ballots.txt")
+
+        # Get user name
+        ok = False
+        while not ok:
+            login, ok = QtGui.QInputDialog.getText(self, 'Nom', 'Votre nom SVP:')
+
+        self.ballots=Ballots("ballots_%s.txt"%login)
         self.combis=[]
         for n,p in enumerate(prenoms):
             for p2 in prenoms[n+1:]:
                 self.combis.append((p,p2))
         import random
         random.shuffle(self.combis)
+
+        # limit the number of votes to 50
+        self.combis = self.combis[:50]
+
         QtCore.QObject.connect(self.ui.button1,QtCore.SIGNAL("clicked()"), self.callback_1)
         QtCore.QObject.connect(self.ui.button2,QtCore.SIGNAL("clicked()"), self.callback_2)
         QtCore.QObject.connect(self.ui.button_equal,QtCore.SIGNAL("clicked()"), self.callback_eq)
