@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # coding: utf-8
 
 import sys
@@ -21,7 +21,7 @@ class Ballots:
                 l.strip()
                 self.add(self.parse_ballot(l))
         except IOError:
-            print "Ballot file not found"
+            print("Ballot file not found")
     def is_in(self,ballot):
         return self.get_couple(ballot) in self.has_ballots
     def get_couple(self,ballot):
@@ -38,7 +38,7 @@ class Ballots:
         self.ballots.append((winner,sep,other,count))
         self.has_ballots.add(self.get_couple(self.ballots[-1]))
     def parse_ballot(self,string):
-        string=unicode(string,"utf-8")
+        #string=str(string)
         count,rest=string.split(":")
         count=int(count)
         winner,sep,other = re.search("([^=^>]*)(=|>)(.*)",rest).groups()
@@ -47,11 +47,11 @@ class Ballots:
         return (winner,sep,other,count)
     def ballot_repr(self,ballot):
         winner,sep,other,count=ballot
-        return unicode(repr(count))+u":"+winner+sep+other
+        return str(repr(count))+":"+winner+sep+other
     def save(self):
         with open(self.filename,"w") as f:
             for ballot in self.ballots:
-                f.write((self.ballot_repr(ballot)+u"\n").encode("utf-8"))
+                f.write(self.ballot_repr(ballot)+"\n")
 
 class NumericalTableItem(QtGui.QTableWidgetItem):
     def __ge__(self,other):
@@ -73,12 +73,12 @@ class ResultWindow(QtGui.QDialog):
                 counts[loser]=counts.get(loser,0)-1
         #Make sure the lowest score is 0
         min_score=min(counts.values())
-        for k in counts.keys():
+        for k in list(counts.keys()):
             counts[k]+=abs(min_score)
 
         table=self.ui.table
         table.setRowCount(len(counts))
-        for n,(key,value) in enumerate(counts.iteritems()):
+        for n,(key,value) in enumerate(iter(counts.items())):
             table.setItem(n,0,NumericalTableItem(key))
             table.setItem(n,1,NumericalTableItem(str(value)))
         table.sortItems(1,Qt.DescendingOrder)
@@ -91,7 +91,7 @@ class StartQT4(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        prenoms=[unicode(x.strip(),"utf-8").capitalize() for x in open("prenoms.txt")]
+        prenoms=[x.strip().capitalize() for x in open("prenoms.txt")]
         self.ballots=Ballots("ballots.txt")
         self.combis=[]
         for n,p in enumerate(prenoms):
@@ -131,11 +131,11 @@ class StartQT4(QtGui.QMainWindow):
         res_win.show_results(self.ballots.ballots)
     def count_ballot_and_update(self,win):
         if win == 0:
-            b=(unicode(self.ui.prenom1.text()),u"=",unicode(self.ui.prenom2.text()),1)
+            b=(str(self.ui.prenom1.text()),"=",str(self.ui.prenom2.text()),1)
         elif win==1:
-            b=(unicode(self.ui.prenom1.text()),u">",unicode(self.ui.prenom2.text()),1)
+            b=(str(self.ui.prenom1.text()),">",str(self.ui.prenom2.text()),1)
         elif win==2:
-            b=(unicode(self.ui.prenom2.text()),u">",unicode(self.ui.prenom1.text()),1)
+            b=(str(self.ui.prenom2.text()),">",str(self.ui.prenom1.text()),1)
         self.ballots.add(b)
         self.ballots.save()
         self.update()

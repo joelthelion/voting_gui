@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'prenom.ui'
 #
-# Created: Sun Nov 28 13:07:50 2010
-#      by: PyQt4 UI code generator 4.8.1
+# Created: Thu Nov  8 20:21:49 2012
+#      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -39,8 +39,8 @@ class Ui_MainWindow(object):
         self.label_2 = QtGui.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(12)
-        font.setWeight(75)
         font.setBold(True)
+        font.setWeight(75)
         self.label_2.setFont(font)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
