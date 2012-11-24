@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'results.ui'
 #
-# Created: Thu Nov  8 20:21:49 2012
+# Created: Sat Nov 24 15:19:45 2012
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_results(object):
     def setupUi(self, results):
         results.setObjectName(_fromUtf8("results"))
-        results.resize(290, 411)
+        results.resize(471, 411)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/all/icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         results.setWindowIcon(icon)
@@ -33,13 +33,15 @@ class Ui_results(object):
         self.table.setSizePolicy(sizePolicy)
         self.table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self.table.setColumnCount(2)
+        self.table.setColumnCount(3)
         self.table.setObjectName(_fromUtf8("table"))
         self.table.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.table.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.table.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.table.setHorizontalHeaderItem(2, item)
         self.table.horizontalHeader().setCascadingSectionResizes(True)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.verticalLayout.addWidget(self.table)
@@ -58,8 +60,10 @@ class Ui_results(object):
         results.setWindowTitle(QtGui.QApplication.translate("results", "Résultats!", None, QtGui.QApplication.UnicodeUTF8))
         self.table.setSortingEnabled(True)
         item = self.table.horizontalHeaderItem(0)
-        item.setText(QtGui.QApplication.translate("results", "Prénom", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("results", "Rang", None, QtGui.QApplication.UnicodeUTF8))
         item = self.table.horizontalHeaderItem(1)
+        item.setText(QtGui.QApplication.translate("results", "Prénom", None, QtGui.QApplication.UnicodeUTF8))
+        item = self.table.horizontalHeaderItem(2)
         item.setText(QtGui.QApplication.translate("results", "Résultat", None, QtGui.QApplication.UnicodeUTF8))
 
 import resource_rc

@@ -1,3 +1,5 @@
 prenoms.txt
-ballots.txt
+ballots*.txt
+*.bak
+tags
 *.pyc

@@ -64,24 +64,28 @@ class ResultWindow(QtGui.QDialog):
         QtGui.QWidget.__init__(self, parent)
         self.ui= Ui_results()
         self.ui.setupUi(self)
-    def show_results(self,ballots):
-        counts={}
+    def show_results(self,prenoms):
+        import rpvote
+        import glob
+        ballots = []
+        for f in glob.glob("ballots_*.txt"):
+            b = Ballots(f)
+            ballots.extend(b.ballots)
+        contest = rpvote.Contest(prenoms)
         for winner,delim,loser,count in ballots:
-            if delim != ">" : continue
-            else:
-                counts[winner]=counts.get(winner,0)+1
-                counts[loser]=counts.get(loser,0)-1
-        #Make sure the lowest score is 0
-        min_score=min(counts.values())
-        for k in list(counts.keys()):
-            counts[k]+=abs(min_score)
+            contest.addballot([[winner],[loser]])
+        contest.computemargins()
+        #contest.printmargins()
 
+        outcome = contest.compute()
+        #outcome.printout()
+        #outcome.printresult()
         table=self.ui.table
-        table.setRowCount(len(counts))
-        for n,(key,value) in enumerate(iter(counts.items())):
-            table.setItem(n,0,NumericalTableItem(key))
-            table.setItem(n,1,NumericalTableItem(str(value)))
-        table.sortItems(1,Qt.DescendingOrder)
+        table.setRowCount(len(prenoms))
+        for n,(rank,name,res) in enumerate(outcome.getresult()):
+            table.setItem(n,0,NumericalTableItem(rank))
+            table.setItem(n,1,NumericalTableItem(name))
+            table.setItem(n,2,NumericalTableItem(str(res)))
         table.resizeColumnsToContents()
         self.exec_()
 
@@ -91,7 +95,7 @@ class StartQT4(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        prenoms=[x.strip().capitalize() for x in open("prenoms.txt")]
+        self.prenoms=[x.strip().capitalize() for x in open("prenoms.txt",encoding="utf-8")]
 
         # Get user name
         ok = False
@@ -100,8 +104,8 @@ class StartQT4(QtGui.QMainWindow):
 
         self.ballots=Ballots("ballots_%s.txt"%login)
         self.combis=[]
-        for n,p in enumerate(prenoms):
-            for p2 in prenoms[n+1:]:
+        for n,p in enumerate(self.prenoms):
+            for p2 in self.prenoms[n+1:]:
                 self.combis.append((p,p2))
         import random
         random.shuffle(self.combis)
@@ -115,7 +119,7 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.actionQuit,QtCore.SIGNAL("triggered()"), sys.exit)
         QtCore.QObject.connect(self.ui.actionResults,QtCore.SIGNAL("triggered()"), self.show_results)
         self.update()
-        #print prenoms
+        #print self.prenoms
     def callback_1(self):
         self.count_ballot_and_update(1)
     def callback_2(self):
@@ -138,7 +142,7 @@ class StartQT4(QtGui.QMainWindow):
     def show_results(self):
         self.show()
         res_win=ResultWindow()
-        res_win.show_results(self.ballots.ballots)
+        res_win.show_results(self.prenoms)
     def count_ballot_and_update(self,win):
         if win == 0:
             b=(str(self.ui.prenom1.text()),"=",str(self.ui.prenom2.text()),1)
